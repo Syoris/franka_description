@@ -4,7 +4,8 @@
 <xacro:macro name="franka_arm_ros2_control"
          params="arm_id
              robot_ip
-             hw_type:=''
+             use_fake_hardware:=^|false
+             fake_sensor_commands:=^|false
              gazebo:=^|false
              hand:=^|false
              gazebo_effort:=^|false
@@ -16,34 +17,23 @@
         <hardware>
           <param name="arm_id">${arm_id}</param>
           <param name="prefix">${arm_prefix}</param>
-          <param name="hw_type">${hw_type}</param>
-
-          <!-- Fake hardware -->
-          <xacro:if value="${hw_type == 'fake'}">
-            <plugin>mock_components/GenericSystem</plugin>
-            <param name="mock_sensor_commands">${fake_sensor_commands}</param>
+          <xacro:if value="${use_fake_hardware}">
+            <plugin>fake_components/GenericSystem</plugin>
+            <param name="fake_sensor_commands">${fake_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
 
-          <!-- <plugin>fake_components/GenericSystem</plugin>
-          <param name="fake_sensor_commands">${fake_sensor_commands}</param>
-          <param name="state_following_offset">0.0</param> -->
-
-          <!-- Gazebo -->
-          <xacro:if value="${hw_type == 'gazebo'}">
+          <xacro:if value="${gazebo}">
             <plugin>franka_ign_ros2_control/IgnitionSystem</plugin>
           </xacro:if>
 
-          <!-- Isaac Sim -->
-          <xacro:if value="${hw_type == 'isaac'}">
-            <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
-            <param name="joint_commands_topic">/isaac_joint_commands</param>
-            <param name="joint_states_topic">/isaac_joint_states</param>
-          </xacro:if>
-
-          <!-- Real, single arm -->
-          <xacro:if value="${hw_type == 'real'}">
+          <xacro:if value="${use_fake_hardware == 0 and gazebo == 0 and multi_arm == 0}">
             <plugin>franka_hardware/FrankaHardwareInterface</plugin>
+            <param name="robot_ip">${robot_ip}</param>
+            <param name="arm_prefix">${arm_prefix}</param>
+          </xacro:if>
+          <xacro:if value="${use_fake_hardware == 0 and gazebo == 0 and multi_arm == 1}">
+            <plugin>franka_hardware/MultiFrankaHardwareInterface</plugin>
             <param name="robot_ip">${robot_ip}</param>
             <param name="arm_prefix">${arm_prefix}</param>
           </xacro:if>

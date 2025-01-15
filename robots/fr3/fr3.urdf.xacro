@@ -43,6 +43,9 @@
   <!-- For a multi arm setup, we need a threaded robot running async-->
   <xacro:arg name="multi_arm" default="false" />
 
+   <!-- Type of hardware -->
+  <xacro:arg name="hw_type" default="fake" />
+
   <xacro:franka_robot arm_id="fr3"
                       joint_limits="${xacro.load_yaml('$(find franka_description)/robots/fr3/joint_limits.yaml')}"
                       inertials="${xacro.load_yaml('$(find franka_description)/robots/fr3/inertials.yaml')}"
@@ -56,6 +59,7 @@
                       robot_ip="$(arg robot_ip)"
                       use_fake_hardware="$(arg use_fake_hardware)"
                       fake_sensor_commands="$(arg fake_sensor_commands)"
+                      hw_type="$(arg hw_type)"
                       gazebo_effort="$(arg gazebo_effort)"
                       no_prefix="$(arg no_prefix)"
                       arm_prefix= ""
