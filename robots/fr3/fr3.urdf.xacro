@@ -10,6 +10,9 @@
   -->
   <xacro:arg name="arm_id" default="fr3" />
 
+  <!-- The prefix of the robot -->
+  <xacro:arg name="arm_prefix" default="" />
+
   <!-- Don't print a prefix for joints, visuals, and links? -->
   <xacro:arg name="no_prefix" default="false"/>
 
@@ -42,6 +45,10 @@
 
   <!-- For a multi arm setup, we need a threaded robot running async-->
   <xacro:arg name="multi_arm" default="false" />
+  
+  <!-- Append an underscore to the user-provided prefix, if non-empty. -->
+  <xacro:property name="prefix" value="$(arg arm_prefix)"/>
+  <xacro:property name="modified_prefix" value="${prefix + '_' if prefix else ''}"/>
 
    <!-- Type of hardware -->
   <xacro:arg name="hw_type" default="fake" />
@@ -62,7 +69,7 @@
                       hw_type="$(arg hw_type)"
                       gazebo_effort="$(arg gazebo_effort)"
                       no_prefix="$(arg no_prefix)"
-                      arm_prefix= ""
+                      arm_prefix="$(arg arm_prefix)"
                       connected_to= "base">
   </xacro:franka_robot>
 
